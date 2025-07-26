@@ -17,6 +17,7 @@ class Order extends Model
         'status_order',
         'address_order',
         'phone_order',
+        'name_order',
         'total_order',
         'note_order',
         'date_order'
@@ -25,7 +26,7 @@ class Order extends Model
     protected $casts = [
         'date_order' => 'datetime'
     ];
-
+    public $timestamps = false;
     public function user()
     {
         return $this->belongsTo(User::class);

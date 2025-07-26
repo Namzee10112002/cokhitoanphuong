@@ -14,6 +14,7 @@ $table->id();
         $table->tinyInteger('status_order')->default(0)->comment('0 là chờ xác nhận, 1 đã xác nhận, 2 đang vận chuyển, 3 đã giao hàng, 4 Hủy');
         $table->string('address_order');
         $table->string('phone_order', 10);
+        $table->string('name_order');
         $table->float('total_order');
         $table->string('note_order');
         $table->dateTime('date_order')->default(DB::raw('CURRENT_TIMESTAMP'));

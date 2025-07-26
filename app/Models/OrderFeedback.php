@@ -21,7 +21,7 @@ class OrderFeedback extends Model
     protected $casts = [
         'time_message' => 'datetime'
     ];
-
+ public $timestamps = false;
     public function order()
     {
         return $this->belongsTo(Order::class);

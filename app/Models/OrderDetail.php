@@ -18,7 +18,7 @@ class OrderDetail extends Model
         'total_detail',
         'status_detail'
     ];
-
+    public $timestamps = false;
     public function order()
     {
         return $this->belongsTo(Order::class);

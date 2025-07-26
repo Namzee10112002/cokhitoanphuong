@@ -18,6 +18,7 @@ $table->id();
         $table->unsignedBigInteger('category_id');
         $table->unsignedBigInteger('supplier_id');
         $table->integer('quantity');
+        $table->integer('sold');
         $table->string('unit');
         $table->tinyInteger('status_product')->default(0)->comment('0 là khả dụng, 1 là bị khóa, 2 là đang sale');
 

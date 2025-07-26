@@ -15,6 +15,12 @@ class CategoryProduct extends Model
         'name_category',
         'status_category'
     ];
+    public static function getActiveCategories()
+{
+    return self::where('status_category', 0)
+        ->orderBy('id', 'asc')
+        ->get();
+}
 
     public function products()
     {
