@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\HomeAdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\User\CartController;
@@ -31,4 +32,9 @@ Route::get('/orders', [HomeUserController::class, 'ordered'])->name('orders.inde
 Route::get('/chat/{order_id}', [ChatController::class, 'index'])->name('chat.index');
 Route::get('/chat/fetch/{order_id}', [ChatController::class, 'fetch'])->name('chat.fetch');
 Route::post('/chat-send', [ChatController::class, 'send'])->name('chat.send');
+
+Route::prefix('admin')->as('admin.')->group(function () {
+    Route::get('/', [HomeAdminController::class, 'index']);
+    Route::get('/home', [HomeAdminController::class, 'index'])->name('home');
+});
 
