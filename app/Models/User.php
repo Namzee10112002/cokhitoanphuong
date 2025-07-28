@@ -47,4 +47,8 @@ class User extends Model
     {
         return $this->hasMany(Session::class);
     }
+    public function importProducts()
+    {
+        return $this->hasMany(ImportProduct::class);
+    }
 }

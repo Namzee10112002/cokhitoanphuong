@@ -26,6 +26,7 @@
     {{-- Content --}}
     <main>
         @yield('content')
+        @include('user.pages.chatbot')
     </main>
 
     {{-- Footer --}}

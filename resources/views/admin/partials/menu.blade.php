@@ -4,19 +4,22 @@
                 </div>
                 <ul class="nav flex-column p-2">
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Quản lý người dùng</a>
+                        <a class="nav-link" href="{{route('admin.users.index')}}">Quản lý người dùng</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Quản lý danh mục sản phẩm</a>
+                        <a class="nav-link" href="{{route('admin.categories.index')}}">Quản lý danh mục sản phẩm</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Quản lý sản phẩm</a>
+                        <a class="nav-link" href="{{route('admin.suppliers.index')}}">Quản lý nhà cung cấp</a>
+                    </li>
+                    <li class="nav-item mb-2">
+                        <a class="nav-link" href="{{route('admin.products.index')}}">Quản lý sản phẩm</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link" href="#">Quản lý đơn hàng</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Quản lý khuyến mãi</a>
+                        <a class="nav-link" href="{{route('admin.promotions.index')}}">Quản lý khuyến mãi</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link" href="#">Quản lý đổi trả bảo hành</a>

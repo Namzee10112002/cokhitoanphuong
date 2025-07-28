@@ -16,7 +16,7 @@ class Promotion extends Model
         'value',
         'status_promotion'
     ];
-
+    public $timestamps = false;
     public function products()
     {
         return $this->hasMany(Product::class, 'promotion_id');

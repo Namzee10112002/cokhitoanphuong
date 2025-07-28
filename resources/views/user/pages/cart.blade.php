@@ -98,38 +98,42 @@
                 {{ session('success') }}
             </div>
         @endif
+        @if (session('momo_pay_url'))
+    <script>
+        window.open('{{ session('momo_pay_url') }}', '_blank');
+    </script>
+@endif
+
         <div class="border p-3 mt-4">
             <h4>Thông tin thanh toán</h4>
-            <form action="{{ route('checkout') }}" method="POST">
+            <form action="{{ route('checkout') }}" method="POST" id="checkout-form">
                 @csrf
-                <input type="number" name="total_order" required hidden value="{{$grandTotal}}">
+                <input type="number" name="total_order" required hidden value="{{ $grandTotal }}">
                 <div class="mb-3">
                     <label class="form-label">Tên người nhận</label>
                     <input type="text" name="name_order" class="form-control" value="{{ session('user')->name }}" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Số điện thoại</label>
-                    <input type="text" name="phone_order" class="form-control" value="{{ session('user')->phone }}"
-                        required>
+                    <input type="text" name="phone_order" class="form-control" value="{{ session('user')->phone }}" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Địa chỉ nhận hàng</label>
-                    <input type="text" name="address_order" class="form-control" value="{{ session('user')->address }}"
-                        required>
+                    <input type="text" name="address_order" class="form-control" value="{{ session('user')->address }}" required>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Phương thức thanh toán</label>
-                    <select name="method_pay" class="form-select" required>
+                    <select name="method_pay" class="form-select" id="method-pay" required>
                         <option value="0">Thanh toán khi nhận hàng</option>
                         <option value="1">Chuyển khoản</option>
-                        <option value="2">Ví điện tử</option>
+                        <option value="2">Ví điện tử momo</option>
                     </select>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Ghi chú</label>
-                    <textarea name="note_order" class="form-select" id="" cols="30" rows="10"></textarea>
+                    <textarea name="note_order" class="form-control" cols="30" rows="4"></textarea>
                 </div>
-                @if($cartItems->isEmpty())
+                @if ($cartItems->isEmpty())
                     <button type="submit" class="btn btn-secondary" disabled>Giỏ hàng đang trống</button>
                 @else
                     <button type="submit" class="btn btn-success">Thanh toán</button>
@@ -137,4 +141,73 @@
             </form>
         </div>
     </div>
+
+    {{-- Overlay background --}}
+    <div id="overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:999;"></div>
+
+    {{-- Popup content --}}
+    <div id="popup-transfer" class="card p-3" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%) scale(0.8); z-index:1000; width:400px; background:white; transition: all 0.3s ease;">
+        <h5 class="text-center mb-3">Thông tin chuyển khoản</h5>
+        <img src="https://down-vn.img.susercontent.com/file/sg-11134201-22100-2cwzke2vi6iv8f" alt="QR Code" class="img-fluid mb-3">
+        <p>Sau khi chuyển khoản xong, vui lòng ghi chú mã đơn hàng để shop xác nhận nhanh chóng.</p>
+        <p class="text-danger">Số tiền thanh toán là {{ number_format($grandTotal, 0, ',', '.') }} đ</p>
+        <div class="d-flex justify-content-center">
+            <button id="close-popup" class="btn btn-danger">Đóng</button>
+        </div>
+    </div>
 @endsection
+
+@push('scripts')
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const methodSelect = document.getElementById('method-pay');
+        const popup = document.getElementById('popup-transfer');
+        const overlay = document.getElementById('overlay');
+        const closeBtn = document.getElementById('close-popup');
+        const form = document.getElementById('checkout-form');
+
+        function showPopup() {
+            overlay.style.display = 'block';
+            popup.style.display = 'block';
+            setTimeout(() => {
+                popup.style.transform = 'translate(-50%, -50%) scale(1)';
+            }, 10);
+        }
+
+        function hidePopup() {
+            popup.style.transform = 'translate(-50%, -50%) scale(0.8)';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+                popup.style.display = 'none';
+            }, 200);
+        }
+
+        methodSelect.addEventListener('change', function () {
+            if (this.value === '1') {
+                showPopup();
+            }
+        });
+
+        closeBtn.addEventListener('click', function () {
+            hidePopup();
+        });
+
+        overlay.addEventListener('click', function () {
+            hidePopup();
+        });
+
+        // Hiện popup sau khi submit nếu chọn "Chuyển khoản"
+        form.addEventListener('submit', function (e) {
+            if (methodSelect.value === '1') {
+                e.preventDefault(); // chặn submit ngay
+                showPopup();
+
+                // Sau 2s thì submit luôn (giả lập user đã xem QR)
+                setTimeout(() => {
+                    form.submit();
+                }, 2000);
+            }
+        });
+    });
+</script>
+@endpush

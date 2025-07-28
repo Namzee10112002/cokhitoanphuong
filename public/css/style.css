@@ -5,3 +5,9 @@ z-index:9999;
 .product-item{
     position: relative;
 }
+.link{
+    color:white;
+}
+.link:hover{
+    color:red;
+}

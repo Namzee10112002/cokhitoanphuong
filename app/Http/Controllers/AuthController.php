@@ -86,6 +86,9 @@ class AuthController extends Controller
         if (!Hash::check($request->password, $user->password)) {
             return back()->withErrors(['password' => 'Mật khẩu không đúng.'])->withInput();
         }
+        if ($user->status==1) {
+            return back()->withErrors(['password' => 'Tài khoản bạn đang bị khóa.'])->withInput();
+        }
 
         // Đăng nhập thành công - Lưu Session
         Session::put('user', $user);

@@ -15,6 +15,7 @@ class CategoryProduct extends Model
         'name_category',
         'status_category'
     ];
+    public $timestamps = false;
     public static function getActiveCategories()
 {
     return self::where('status_category', 0)

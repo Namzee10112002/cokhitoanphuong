@@ -15,7 +15,7 @@ class Supplier extends Model
         'name_supplier',
         'status_supplier'
     ];
-
+    public $timestamps = false;
     public function products()
     {
         return $this->hasMany(Product::class, 'supplier_id');
