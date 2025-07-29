@@ -1,50 +1,63 @@
 <?php
 
 use App\Http\Controllers\Admin\CategoryController;
+use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PromotionController;
 use App\Http\Controllers\Admin\SupplierController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\HomeAdminController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\User\CartController;
 use App\Http\Controllers\User\HomeUserController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Middleware\CheckAdminOrStaff;
+use App\Http\Middleware\CheckUser;
+use App\Http\Middleware\CheckLoggedIn;
+use App\Http\Middleware\CheckGuest;
 
+//route không cần xác thực
 Route::get('/', [HomeUserController::class, 'index']);
 Route::get('/home', [HomeUserController::class, 'index'])->name('home');
 Route::get('/about', [HomeUserController::class, 'about'])->name('about');
 Route::get('/contact', [HomeUserController::class, 'contact'])->name('contact');
-Route::get('/auth', [AuthController::class, 'index'])->name('auth');
-Route::post('/register', [AuthController::class, 'register'])->name('register');
-Route::post('/login', [AuthController::class, 'login'])->name('login');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
-
-Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
-
-Route::post('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
-
 Route::get('/product/{id}', [HomeUserController::class, 'productDetail'])->name('product.detail');
 Route::get('/product', [HomeUserController::class, 'product'])->name('product');
-Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-Route::get('/cart', [CartController::class, 'cart'])->name('cart.index');
-Route::post('/cart/delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
-Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
-Route::get('/orders', [HomeUserController::class, 'ordered'])->name('orders.index');
-
-Route::get('/chat/{order_id}', [ChatController::class, 'index'])->name('chat.index');
-Route::get('/chat/fetch/{order_id}', [ChatController::class, 'fetch'])->name('chat.fetch');
-Route::post('/chat-send', [ChatController::class, 'send'])->name('chat.send');
 Route::post('/chatbot/message', [ChatController::class, 'sendMessage'])->name('chatbot.message');
 Route::get('/chatbot/history', [ChatController::class, 'getHistory'])->name('chatbot.history');
+//
+
+Route::middleware([CheckGuest::class])->group(function () {
+    Route::get('/auth', [AuthController::class, 'index'])->name('auth');
+    Route::post('/register', [AuthController::class, 'register'])->name('register');
+    Route::post('/login', [AuthController::class, 'login'])->name('login');
+});
+
+Route::middleware([CheckLoggedIn::class])->group(function () {
+    Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+Route::middleware([CheckLoggedIn::class, CheckUser::class])->group(function () {
+    Route::get('/profile', [AuthController::class, 'profile'])->name('profile');
+    Route::post('/profile', [AuthController::class, 'updateProfile'])->name('profile.update');
+    Route::post('/cart/add', [CartController::class, 'addToCart'])->name('cart.add');
+    Route::get('/cart', [CartController::class, 'cart'])->name('cart.index');
+    Route::post('/cart/delete/{id}', [CartController::class, 'delete'])->name('cart.delete');
+    Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+    Route::post('/checkout', [CartController::class, 'checkout'])->name('checkout');
+    Route::get('/orders', [HomeUserController::class, 'ordered'])->name('orders.index');
+    Route::get('/chat/{order_id}', [ChatController::class, 'index'])->name('chat.index');
+    Route::get('/chat/fetch/{order_id}', [ChatController::class, 'fetch'])->name('chat.fetch');
+    Route::post('/chat-send', [ChatController::class, 'send'])->name('chat.send');
+    Route::post('/payment/momo', [CartController::class, 'momoPayment'])->name('payment.momo');
+    Route::get('/payment/momo/return', [CartController::class, 'momoReturn'])->name('payment.momo.return');
+});
 
 
-Route::post('/payment/momo', [CartController::class, 'momoPayment'])->name('payment.momo');
-Route::get('/payment/momo/return', [CartController::class, 'momoReturn'])->name('payment.momo.return');
-
-Route::prefix('admin')->as('admin.')->group(function () {
+//route chi truy cập nếu là admin hoặc staff
+Route::prefix('admin')->as('admin.')->middleware([CheckLoggedIn::class, CheckAdminOrStaff::class])->group(function () {
     Route::get('/', [HomeAdminController::class, 'index']);
     Route::get('/home', [HomeAdminController::class, 'index'])->name('home');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -80,5 +93,20 @@ Route::prefix('admin')->as('admin.')->group(function () {
     Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
     Route::post('/products/{product}', [ProductController::class, 'update'])->name('products.update');
     Route::post('/products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggleStatus');
-});
 
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::post('/orders/{order}/update', [OrderController::class, 'update'])->name('orders.update');
+    Route::get('/orders/{order}/detail', [OrderController::class, 'detail'])->name('orders.detail');
+    Route::post('/orders/{orderDetail}/update-status', [OrderController::class, 'updateDetailStatus'])->name('orders.updateDetailStatus');
+
+    Route::get('/chat/{orderId}', [ChatController::class, 'index'])->name('chat');
+    Route::get('/chat/fetch/{orderId}', [ChatController::class, 'fetch'])->name('chat.fetch');
+    Route::post('/chat/send', [ChatController::class, 'send'])->name('chat.send');
+
+    Route::get('/warranty', [OrderController::class, 'warranty'])->name('warranty');
+    Route::post('/warranty/update-status/{orderDetail}', [OrderController::class, 'updateDetailStatus'])->name('warranty.updateStatus');
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::post('/dashboard/filter-revenue', [DashboardController::class, 'filterRevenue'])->name('dashboard.filterRevenue');
+});
+//

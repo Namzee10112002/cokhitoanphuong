@@ -24,7 +24,7 @@ class ChatController extends Controller
             }
         }
 
-        return view('user.pages.order-feedback', compact('orderId'));
+        return view('admin.pages.orders.chat', compact('orderId'));
     }
     public function fetch($orderId)
 {

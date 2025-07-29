@@ -16,22 +16,19 @@
                         <a class="nav-link" href="{{route('admin.products.index')}}">Quản lý sản phẩm</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Quản lý đơn hàng</a>
+                        <a class="nav-link" href="{{route('admin.orders.index')}}">Quản lý đơn hàng</a>
                     </li>
                     <li class="nav-item mb-2">
                         <a class="nav-link" href="{{route('admin.promotions.index')}}">Quản lý khuyến mãi</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Quản lý đổi trả bảo hành</a>
+                        <a class="nav-link" href="{{route('admin.warranty')}}">Quản lý đổi trả bảo hành</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Quản lý phản hồi đánh giá</a>
-                    </li>
-                    <li class="nav-item mb-2">
-                        <a class="nav-link" href="#">Báo cáo - thống kê</a>
+                        <a class="nav-link" href="{{route('admin.dashboard')}}">Báo cáo - thống kê</a>
                     </li>
                     <li class="nav-item mt-auto border-top">
-                        <a class="nav-link text-danger" href="#">Đăng xuất</a>
+                        <a class="nav-link text-danger" href="{{route('logout')}}">Đăng xuất</a>
                     </li>
                 </ul>
             </nav>

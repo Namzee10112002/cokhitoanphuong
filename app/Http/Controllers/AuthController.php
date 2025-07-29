@@ -96,6 +96,9 @@ class AuthController extends Controller
         // Cập nhật lần đăng nhập cuối
         $user->update(['last_login' => now()]);
 
+        if($user->role==1 || $user->role==2){
+            return redirect()->route('admin.home')->with('success', 'Đăng nhập thành công.');
+        }
         return redirect()->route('home')->with('success', 'Đăng nhập thành công.');
     }
     public function logout()
