@@ -57,6 +57,13 @@ public function store(Request $request)
 
     return redirect()->route('admin.users.index')->with('success', 'Tạo người dùng thành công');
 }
+public function toggleStatus(User $user)
+    {
+        $user->status = $user->status == 0 ? 1 : 0;
+        $user->save();
+
+        return response()->json(['success' => true, 'new_status' => $user->status]);
+    }
 
 }
 
