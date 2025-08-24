@@ -18,7 +18,10 @@ use App\Http\Middleware\CheckUser;
 use App\Http\Middleware\CheckLoggedIn;
 use App\Http\Middleware\CheckGuest;
 
-//route không cần xác thực
+// 5 kiểu phương thức chính GET(Lấy dữ liệu), POST(Thêm mới dữ liệu), PUT(sửa dữ liệu toàn phần), PATCH(sửa dữ liệu 1 phần), DELETE(xóa dữ liệu)
+//route không cần xác thực 
+
+//route của tiến đạt bắt đầu
 Route::get('/', [HomeUserController::class, 'index']);
 Route::get('/home', [HomeUserController::class, 'index'])->name('home');
 Route::get('/about', [HomeUserController::class, 'about'])->name('about');
@@ -54,10 +57,11 @@ Route::middleware([CheckLoggedIn::class, CheckUser::class])->group(function () {
     Route::post('/payment/momo', [CartController::class, 'momoPayment'])->name('payment.momo');
     Route::get('/payment/momo/return', [CartController::class, 'momoReturn'])->name('payment.momo.return');
 });
-
+//route của tiến đạt kết thúc
 
 //route chi truy cập nếu là admin hoặc staff
 Route::prefix('admin')->as('admin.')->middleware([CheckLoggedIn::class, CheckAdminOrStaff::class])->group(function () {
+    //route của cao đạt bắt đầu
     Route::get('/', [HomeAdminController::class, 'index']);
     Route::get('/home', [HomeAdminController::class, 'index'])->name('home');
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
@@ -79,6 +83,16 @@ Route::prefix('admin')->as('admin.')->middleware([CheckLoggedIn::class, CheckAdm
     Route::post('/suppliers/{supplier}', [SupplierController::class, 'update'])->name('suppliers.update');
     Route::post('/suppliers/{supplier}/toggle-status', [SupplierController::class, 'toggleStatus'])->name('suppliers.toggleStatus');
 
+    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
+    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
+    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
+    Route::post('/products/{product}', [ProductController::class, 'update'])->name('products.update');
+    Route::post('/products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggleStatus');
+    //route của cao đạt kết thúc
+
+
+    //route của hoàn bắt đầu
     Route::get('/promotions', [PromotionController::class, 'index'])->name('promotions.index');
     Route::get('/promotions/create', [PromotionController::class, 'create'])->name('promotions.create');
     Route::post('/promotions', [PromotionController::class, 'store'])->name('promotions.store');
@@ -87,17 +101,14 @@ Route::prefix('admin')->as('admin.')->middleware([CheckLoggedIn::class, CheckAdm
     Route::post('/promotions/{promotion}/assign-product', [PromotionController::class, 'assignProduct'])->name('promotions.assignProduct');
     Route::post('/promotions/{promotion}/remove-product/{product}', [PromotionController::class, 'removeProduct'])->name('promotions.removeProduct');
 
-    Route::get('/products', [ProductController::class, 'index'])->name('products.index');
-    Route::get('/products/create', [ProductController::class, 'create'])->name('products.create');
-    Route::post('/products', [ProductController::class, 'store'])->name('products.store');
-    Route::get('/products/{product}/edit', [ProductController::class, 'edit'])->name('products.edit');
-    Route::post('/products/{product}', [ProductController::class, 'update'])->name('products.update');
-    Route::post('/products/{product}/toggle-status', [ProductController::class, 'toggleStatus'])->name('products.toggleStatus');
 
     Route::get('/orders', [OrderController::class, 'index'])->name('orders.index');
     Route::post('/orders/{order}/update', [OrderController::class, 'update'])->name('orders.update');
     Route::get('/orders/{order}/detail', [OrderController::class, 'detail'])->name('orders.detail');
     Route::post('/orders/{orderDetail}/update-status', [OrderController::class, 'updateDetailStatus'])->name('orders.updateDetailStatus');
+    Route::get('/orders/{order}/invoice/export', [OrderController::class, 'exportInvoice'])->name('orders.exportInvoice');
+    Route::get('/orders/{order}/invoices/{invoice}', [OrderController::class, 'downloadInvoice'])
+        ->name('orders.downloadInvoice');
 
     Route::get('/chat/{orderId}', [ChatController::class, 'index'])->name('chat');
     Route::get('/chat/fetch/{orderId}', [ChatController::class, 'fetch'])->name('chat.fetch');
@@ -106,7 +117,16 @@ Route::prefix('admin')->as('admin.')->middleware([CheckLoggedIn::class, CheckAdm
     Route::get('/warranty', [OrderController::class, 'warranty'])->name('warranty');
     Route::post('/warranty/update-status/{orderDetail}', [OrderController::class, 'updateDetailStatus'])->name('warranty.updateStatus');
 
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::post('/dashboard/filter-revenue', [DashboardController::class, 'filterRevenue'])->name('dashboard.filterRevenue');
+
+
+    Route::prefix('dashboard')->group(function () {
+        Route::get('/', [DashboardController::class, 'reports'])->name('dashboard.reports');
+        Route::get('/export-excel', [DashboardController::class, 'exportReportsExcel'])->name('dashboard.reports.export');
+    });
+
+
+
+
+    //route của hoàn kết thúc
 });
 //

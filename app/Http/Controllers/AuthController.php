@@ -82,7 +82,6 @@ class AuthController extends Controller
         if (!$user) {
             return back()->withErrors(['email' => 'Tài khoản không tồn tại.'])->withInput();
         }
-
         if (!Hash::check($request->password, $user->password)) {
             return back()->withErrors(['password' => 'Mật khẩu không đúng.'])->withInput();
         }

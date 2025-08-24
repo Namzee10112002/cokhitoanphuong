@@ -26,7 +26,7 @@ class Product extends Model
         'status_product'
     ];
     public $timestamps = false;
-    public static function getActiveProducts($limit = 20)
+    public static function getActiveProducts()
     {
         return self::select(
             'products.*',
@@ -39,13 +39,12 @@ class Product extends Model
             })
             ->where('products.status_product', '!=', 1)
             ->orderBy('products.id', 'desc')
-            ->limit($limit)
-            ->get();
+            ;
     }
     public static function getProductWithRelationsById($id)
     {
         return self::select(
-            'products.*',
+            'products.*', // lấy tất cả dữ liệu trong bảng products
             'category_product.name_category',
             'suppliers.name_supplier',
             'promotion.name_promotion',

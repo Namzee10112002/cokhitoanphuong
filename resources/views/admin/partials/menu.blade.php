@@ -25,7 +25,7 @@
                         <a class="nav-link" href="{{route('admin.warranty')}}">Quản lý đổi trả bảo hành</a>
                     </li>
                     <li class="nav-item mb-2">
-                        <a class="nav-link" href="{{route('admin.dashboard')}}">Báo cáo - thống kê</a>
+                        <a class="nav-link" href="{{route('admin.dashboard.reports')}}">Báo cáo - thống kê</a>
                     </li>
                     <li class="nav-item mt-auto border-top">
                         <a class="nav-link text-danger" href="{{route('logout')}}">Đăng xuất</a>

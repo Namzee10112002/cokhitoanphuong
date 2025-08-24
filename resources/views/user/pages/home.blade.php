@@ -49,24 +49,35 @@
         <h2 class="text-center">Sản phẩm bán chạy</h2>
         <div class="row mb-4">
             @foreach ($products as $product)
-                <div class="col-md-3 text-center product-item">
+                <div class="col-md-3 text-center product-item mb-4">
                     @if ($product->promotion_id != null)
                         <div class="sale">Sale {{ $product->value }}%</div>
                     @endif
-                    <img src="{{ $product->image_product }}" class="img-fluid" alt="" width="100%">
+                    <div class="" style="height: 350px">
+                        <img src="{{ $product->image_product }}" class="img-fluid" alt="" height="100%" width="100%">
+                    </div>
                     <h5>{{ $product->name_product }}</h5>
                     @if ($product->promotion_id != null)
-                        <p class="text-danger">Giá mới: <del>{{ number_format($product->price, 0, ',', '.') }} đ</del><span
-                                class="text-success"> {{ number_format($product->price * ((100 - $product->value) / 100), 0, ',', '.') }}
-                                đ</span></p>
+                        <p class="text-danger">
+                            Giá mới:
+                            <del>{{ number_format($product->price, 0, ',', '.') }} đ</del>
+                            <span class="text-success">
+                                {{ number_format($product->price * ((100 - $product->value) / 100), 0, ',', '.') }} đ
+                            </span>
+                        </p>
                     @else
                         <p class="text-danger">Giá: {{ number_format($product->price, 0, ',', '.') }} đ</p>
                     @endif
                     <a href="{{ route('product.detail', ['id' => $product->id]) }}" class="btn btn-primary">Xem chi tiết</a>
                 </div>
             @endforeach
-
         </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center">
+            {{ $products->links('pagination::bootstrap-5') }}
+        </div>
+
         <!-- Đội ngũ nhân sự -->
         <div class="text-center mb-5">
             <h3>Đội Ngũ Của Chúng Tôi</h3>

@@ -41,4 +41,10 @@ class Order extends Model
     {
         return $this->hasMany(OrderFeedback::class, 'order_id');
     }
+
+public function invoices()
+{
+    return $this->hasMany(Invoice::class, 'order_id');
+}
+
 }

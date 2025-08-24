@@ -60,7 +60,6 @@
 
             </aside>
 
-            <!-- Danh sách sản phẩm (80%) -->
             <section class="col-md-9">
                 <div class="row">
                     @forelse ($products as $product)
@@ -70,14 +69,17 @@
                             @endif
                             <div class="card h-100">
                                 <img src="{{ $product->image_product }}" class="card-img-top" alt="{{ $product->name_product }}"
-                                    style="height: 200px;  width: 100%;">
+                                    style="height: 200px; width: 100%;">
                                 <div class="card-body d-flex flex-column">
                                     <h6 class="card-title">{{ $product->name_product }}</h6>
                                     @if ($product->promotion_id != null)
-                                        <p class="text-danger">Giá mới: <del>{{ number_format($product->price, 0, ',', '.') }}
-                                                đ</del><span class="text-success">
+                                        <p class="text-danger">
+                                            Giá mới: <del>{{ number_format($product->price, 0, ',', '.') }} đ</del>
+                                            <span class="text-success">
                                                 {{ number_format($product->price * ((100 - $product->value) / 100), 0, ',', '.') }}
-                                                đ</span></p>
+                                                đ
+                                            </span>
+                                        </p>
                                     @else
                                         <p class="text-danger">Giá: {{ number_format($product->price, 0, ',', '.') }} đ</p>
                                     @endif
@@ -90,7 +92,13 @@
                         <p>Không có sản phẩm nào phù hợp.</p>
                     @endforelse
                 </div>
+
+                <!-- ✅ Phân trang -->
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $products->links('pagination::bootstrap-5') }}
+                </div>
             </section>
+
         </div>
     </div>
 @endsection

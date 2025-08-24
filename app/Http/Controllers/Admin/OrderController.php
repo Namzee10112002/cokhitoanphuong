@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Order;
 use App\Models\OrderDetail;
 use App\Models\OrderFeedback;
+use Barryvdh\DomPDF\Facade\Pdf;
+use App\Models\Invoice;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 class OrderController extends Controller
 {
     public function index()
@@ -58,5 +62,54 @@ public function warranty()
         ->get();
 
     return view('admin.pages.orders.warranty', compact('orderDetails'));
+}
+
+public function exportInvoice($orderId)
+{
+    $order = Order::with(['orderDetails.product', 'user'])->findOrFail($orderId);
+
+    // Render ra view hóa đơn
+$pdf = Pdf::loadView('admin.pages.orders.invoices', compact('order'))
+        ->setPaper('A4')
+          ->setOptions([
+              'isHtml5ParserEnabled' => true,
+              'isRemoteEnabled' => true,
+              'defaultFont' => 'DejaVuSans'
+          ]);
+          
+    // Tạo tên file
+    $fileName = 'invoice_order_' . $order->id . '.pdf';
+    $filePath = 'invoices/' . $fileName;
+
+    // Lưu file PDF vào storage (storage/app/invoices/)
+    Storage::disk('local')->put($filePath, $pdf->output());
+
+    // Lưu vào DB invoices
+    $invoice = new Invoice();
+    $invoice->order_id = $order->id;
+    $invoice->invoice_pdf = $filePath;
+    $invoice->user_id = session('user')->id;
+    $invoice->save();
+
+    // Tải về cho người dùng
+    return $pdf->download($fileName);
+}
+public function downloadInvoice(Order $order, Invoice $invoice)
+{
+    // Kiểm tra invoice có thuộc order không
+    if ($invoice->order_id !== $order->id) {
+        abort(403, 'Bạn không có quyền xem hóa đơn này');
+    }
+
+    $filePath = $invoice->invoice_pdf; // ví dụ: private/invoices/invoice_order_14.pdf
+
+    if (!Storage::exists($filePath)) {
+        abort(404, 'Hóa đơn không tồn tại');
+    }
+
+    // Trả về file PDF để tải về/xem
+    return Storage::download($filePath, 'HD'.$invoice->id.'.pdf', [
+        'Content-Type' => 'application/pdf'
+    ]);
 }
 }

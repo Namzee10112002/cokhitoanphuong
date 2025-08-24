@@ -28,4 +28,15 @@ class OrderDetail extends Model
     {
         return $this->belongsTo(Product::class);
     }
+    public function getStatusTextAttribute()
+{
+    return match($this->status_detail) {
+        0 => 'Sản phẩm OK',
+        1 => 'Sản phẩm có lỗi, chờ thu hồi',
+        2 => 'Sản phẩm được thu hồi, chờ xử lý',
+        3 => 'Đã xử lý xong',
+        default => 'Không xác định',
+    };
+}
+
 }
